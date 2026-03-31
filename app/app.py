@@ -34,9 +34,10 @@ def extract_text_from_bytes(file_bytes, filename):
 def call_gemini_rest(prompt):
 
   # Use the current stable high-performance model
-    modelname = "gemini-2.5-flash" 
+    modelname = "gemini-3-flash-preview"
     
-    # Switch to the v1beta endpoint to ensure the model is found
+    # CRITICAL: Change '/v1/' to '/v1beta/'
+    # The newest 3-series models require the v1beta endpoint for REST calls
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelname}:generateContent?key={GEMINIAPIKEY}"
     
     headers = {'Content-Type': 'application/json'}
@@ -49,6 +50,7 @@ def call_gemini_rest(prompt):
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     else:
+        # This will help you catch if your API key or billing has issues
         raise Exception(f"Gemini API Error: {response.status_code} - {response.text}")
     
 
