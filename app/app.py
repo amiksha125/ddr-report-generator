@@ -45,10 +45,9 @@ def extract_text_from_bytes(file_bytes, filename):
 
 def call_gemini_rest(prompt):
 
-    modelname = "gemini-3-flash-preview" 
+    modelname = "gemini-3-flash-preview"
     
-    # CRITICAL FIX: Change '/v1/' to '/v1beta/' 
-    # v1 does not recognize the newer 2.5 or 3.0 models
+    # 2. Change '/v1/' to '/v1beta/' in the URL below
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelname}:generateContent?key={GEMINIAPIKEY}"
     
     headers = {'Content-Type': 'application/json'}
@@ -56,13 +55,13 @@ def call_gemini_rest(prompt):
         "contents": [{"parts": [{"text": prompt}]}]
     }
     
+    # The rest of your code stays exactly the same
     response = requests.post(url, headers=headers, json=payload)
     if response.status_code == 200:
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     else:
-        # This will now show you if the error is due to the API Key or Quota
-        raise Exception(f"Gemini API Error: {response.status_code} - {response.text}")
+        raise Exception(f"Error: {response.status_code} - {response.text}")
 
     
 
