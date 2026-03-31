@@ -33,10 +33,10 @@ def extract_text_from_bytes(file_bytes, filename):
 
 def call_gemini_rest(prompt):
 
-    # This is the correct alias for the 1.5 Flash model
-    modelname = "gemini-1.5-flash" # or "gemini-1.5-flash-latest"
+  # Use the current stable high-performance model
+    modelname = "gemini-2.5-flash" 
     
-    # CHANGE 'v1' TO 'v1beta' HERE
+    # Switch to the v1beta endpoint to ensure the model is found
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelname}:generateContent?key={GEMINIAPIKEY}"
     
     headers = {'Content-Type': 'application/json'}
@@ -49,7 +49,6 @@ def call_gemini_rest(prompt):
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     else:
-        # This helps us catch if the key was disabled (401 error)
         raise Exception(f"Gemini API Error: {response.status_code} - {response.text}")
     
 
