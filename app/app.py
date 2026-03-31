@@ -45,9 +45,9 @@ def extract_text_from_bytes(file_bytes, filename):
 
 def call_gemini_rest(prompt):
 
-    modelname = "gemini-3-flash-preview"
+    modelname = "gemini-2.0-flash" 
     
-    # 2. Change '/v1/' to '/v1beta/' in the URL below
+    # CRITICAL: It MUST say v1beta, not v1
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelname}:generateContent?key={GEMINIAPIKEY}"
     
     headers = {'Content-Type': 'application/json'}
@@ -55,13 +55,14 @@ def call_gemini_rest(prompt):
         "contents": [{"parts": [{"text": prompt}]}]
     }
     
-    # The rest of your code stays exactly the same
     response = requests.post(url, headers=headers, json=payload)
-    if response.status_code == 200:
-        result = response.json()
-        return result['candidates'][0]['content']['parts'][0]['text']
-    else:
-        raise Exception(f"Error: {response.status_code} - {response.text}")
+    
+    # If it still fails, this print will tell you exactly what the NEW error is
+    if response.status_code != 200:
+        print(f"DEBUG: URL used was {url}")
+        print(f"DEBUG: Error response: {response.text}")
+        
+    return response.json()['candidates'][0]['content']['parts'][0]['text']
 
     
 
