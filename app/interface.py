@@ -1,6 +1,7 @@
 import streamlit as st
-import requests
 import os
+# Import the logic function from your app.py file
+from app import process_and_generate_report
 
 # Page Config
 st.set_page_config(page_title="AI DDR Generator", page_icon="🏗️", layout="centered")
@@ -17,7 +18,6 @@ st.markdown("""
 st.title("🏗️ Professional DDR Generator")
 
 st.info("ℹ️ **System Note:** This version is optimized for text-based diagnostic correlation. Image analysis is currently limited due to API Free Tier constraints.")
-
 
 st.subheader("Upload inspection data to generate a Diagnostic Report")
 
@@ -36,30 +36,27 @@ with st.container():
         if insp_file and ther_file:
             with st.spinner("AI is analyzing reports and generating PDF..."):
                 try:
-                    # Prepare the files for the FastAPI backend
-                    files = {
-                        "inspection_file": (insp_file.name, insp_file.getvalue()),
-                        "thermal_file": (ther_file.name, ther_file.getvalue())
-                    }
+                    # DIRECT CALL to your app.py logic
+                    # This replaces the requests.post("http://127.0.0.1:8000/...")
+                    pdf_content = process_and_generate_report(insp_file, ther_file)
                     
-                    # Call your FastAPI endpoint (Ensure app.py is running on port 8000)
-                    response = requests.post("http://127.0.0.1:8000/generate_ddr/", files=files)
-                    
-                    if response.status_code == 200:
+                    if pdf_content:
                         st.success("✅ Report Generated Successfully!")
                         # Download Button for the PDF
                         st.download_button(
                             label="📥 Download Professional PDF Report",
-                            data=response.content,
+                            data=pdf_content,
                             file_name=f"DDR_Final_Report.pdf",
                             mime="application/pdf"
                         )
                     else:
-                        st.error(f"Backend Error: {response.text}")
+                        st.error("Backend Error: Failed to generate PDF content.")
+                        
                 except Exception as e:
-                    st.error(f"Connection Error: Is your FastAPI server running? ({e})")
+                    # This now catches real processing errors instead of just connection errors
+                    st.error(f"Processing Error: {e}")
         else:
             st.warning("Please upload both files before proceeding.")
 
 st.markdown("---")
-st.caption("Powered by Gemini 3 Flash & FastAPI")
+st.caption("Powered by Gemini 3 Flash & Streamlit Cloud")
