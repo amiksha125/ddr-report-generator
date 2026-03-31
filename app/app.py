@@ -32,10 +32,10 @@ def extract_text_from_bytes(file_bytes, filename):
         return f"Extraction Error: {str(e)}"
 
 def call_gemini_rest(prompt):
-    # This is the 2026 stable production name for the v1 endpoint
+    # This is the stable 2026 model name for the v1 endpoint
     model_name = "gemini-3-flash" 
     
-    # URL remains v1 (which we know is working now!)
+    # We use the v1 URL which your previous error proved is working
     url = f"https://generativelanguage.googleapis.com/v1/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     
     headers = {'Content-Type': 'application/json'}
@@ -48,6 +48,7 @@ def call_gemini_rest(prompt):
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     else:
+        # This helps us catch if the key was disabled (401 error)
         raise Exception(f"Gemini API Error: {response.status_code} - {response.text}")
     
 
