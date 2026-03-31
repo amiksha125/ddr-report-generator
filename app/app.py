@@ -32,10 +32,10 @@ def extract_text_from_bytes(file_bytes, filename):
         return f"Extraction Error: {str(e)}"
 
 def call_gemini_rest(prompt):
-    # The most basic, universal model name
-    model_name = "gemini-1.5-flash" 
+    # Update to the 2026 stable version
+    model_name = "gemini-2.5-flash" 
     
-    # Using 'v1' instead of 'v1beta' is much more stable
+    # Keep the 'v1' URL as it is now working
     url = f"https://generativelanguage.googleapis.com/v1/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     
     headers = {'Content-Type': 'application/json'}
@@ -48,8 +48,7 @@ def call_gemini_rest(prompt):
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     else:
-        # We add the URL to the error so we can see if it's REALLY updating
-        raise Exception(f"URL Used: {url} | Error: {response.status_code} - {response.text}")
+        raise Exception(f"Gemini API Error: {response.status_code} - {response.text}")
     
 
 class DDR_PDF(FPDF):
