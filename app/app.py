@@ -33,10 +33,10 @@ def extract_text_from_bytes(file_bytes, filename):
 
 def call_gemini_rest(prompt):
     # This is the stable 2026 model name for the v1 endpoint
-    model_name = "gemini-3-flash" 
+    model_name = "gemini-flash-latest"
     
     # We use the v1 URL which your previous error proved is working
-    url = f"https://generativelanguage.googleapis.com/v1/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     
     headers = {'Content-Type': 'application/json'}
     payload = {
