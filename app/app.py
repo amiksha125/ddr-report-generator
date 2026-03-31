@@ -32,10 +32,10 @@ def extract_text_from_bytes(file_bytes, filename):
         return f"Extraction Error: {str(e)}"
 
 def call_gemini_rest(prompt):
-    # Update to the 2026 stable version
-    model_name = "gemini-2.5-flash" 
+    # This is the 2026 stable production name for the v1 endpoint
+    model_name = "gemini-3-flash" 
     
-    # Keep the 'v1' URL as it is now working
+    # URL remains v1 (which we know is working now!)
     url = f"https://generativelanguage.googleapis.com/v1/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     
     headers = {'Content-Type': 'application/json'}
