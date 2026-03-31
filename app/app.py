@@ -14,6 +14,18 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 UPLOAD_FOLDER = "uploaded_reports"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
+
+response = requests.get(url)
+if response.status_code == 200:
+    models = response.json()
+    print("--- ACCESSIBLE MODELS FOR YOUR KEY ---")
+    for m in models.get('models', []):
+        if "flash" in m['name']:
+            print(f"USE THIS NAME: {m['name']}")
+else:
+    print(f"Error {response.status_code}: {response.text}")
+
 # ---------------- HELPERS ------------------
 def extract_text_from_bytes(file_bytes, filename):
     text = ""
@@ -33,9 +45,10 @@ def extract_text_from_bytes(file_bytes, filename):
 
 def call_gemini_rest(prompt):
 
-    modelname = "gemini-3-flash-preview"
+    modelname = "gemini-3-flash-preview" 
     
-    # 2. CRITICAL: Change '/v1/' to '/v1beta/' in the URL
+    # CRITICAL FIX: Change '/v1/' to '/v1beta/' 
+    # v1 does not recognize the newer 2.5 or 3.0 models
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelname}:generateContent?key={GEMINIAPIKEY}"
     
     headers = {'Content-Type': 'application/json'}
@@ -48,7 +61,7 @@ def call_gemini_rest(prompt):
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     else:
-        # This will tell you if the error changed from 404 to something else (like Quota)
+        # This will now show you if the error is due to the API Key or Quota
         raise Exception(f"Gemini API Error: {response.status_code} - {response.text}")
 
     
